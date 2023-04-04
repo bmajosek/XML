@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="my.for"
+    elementFormDefault="qualified"
+    xmlns:for="my.for"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+	<xs:element name="formulaT">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="tracks" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="track" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="id" type="xs:positiveInteger">
+										</xs:element>
+										<xs:element name="name" type="xs:string">
+										</xs:element>
+										<xs:element name="length" type="xs:double">
+										</xs:element>
+										<xs:element name="corners">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="corner" minOccurs="2" maxOccurs="25">
+														<xs:complexType>
+															<xs:attribute name="name"  type="xs:string" use="required"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+											<xs:key name="cornerKey">
+												<xs:selector xpath="for:corner"/>
+												<xs:field xpath="@name"/>
+											</xs:key>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="events" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="event" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="name"  type="xs:string">
+										</xs:element>
+										<xs:element name="date" type="xs:date">
+										</xs:element>
+										<xs:element name="track">
+											<xs:complexType>
+												<xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="participant" minOccurs="2" maxOccurs="unbounded" type="xs:string">
+										</xs:element>
+									</xs:sequence>
+									
+								</xs:complexType>
+								
+							
+								<xs:keyref name="trackRef" refer="for:trackKey">
+									<xs:selector xpath="for:event/for:track"/>
+									<xs:field xpath="@id"/>
+								</xs:keyref>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="people" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="tortoise" minOccurs="2" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:group ref="for:nickcolor"/>
+										<xs:element name="turbo" minOccurs="0" maxOccurs="1">
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="startNumber" type="for:normnb" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="spectator" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:group ref="for:nickcolor"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:key name="tortoiseKey">
+			<xs:selector xpath="for:tortoise"/>
+			<xs:field xpath="@startNumber"/>
+		</xs:key>
+		<xs:key name="trackKey">
+			<xs:selector xpath="for:tracks/for:track/for:id"/>
+			<xs:field xpath="."/>
+		</xs:key>
+	</xs:element>
+	<xs:group name="nickcolor">
+		<xs:sequence>
+			<xs:element name="nick" type="for:normnick"/>
+			<xs:element name="color" type="for:normcol">
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:simpleType name="normcol">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="green"/>
+			<xs:enumeration value="light green"/>
+			<xs:enumeration value="dark green"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="normnick">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="^[A-Z][a-zA-Z]*"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="normnb">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="^[T][0-9]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
